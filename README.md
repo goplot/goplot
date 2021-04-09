@@ -28,9 +28,9 @@ Scripts
 
 The goplot package consistes of the following shell scripts:
 
-- goplot.sh is the main script and runs continuously in the background and calls tractor.sh to start new parallel plots according to your configuration
-- tractor.sh is called by goplot.sh to start a new plot and to log details and send annotations to Grafana
-- diskhand.sh is run by cron every two minutes, its job is to keep an eye on disk space and provide disks for tractor, or take disks out of rotation when filled
-- farmerlog.sh runs continuously in the background and monitors the Chia log for eligible plots passing the plot filter and send the data to prometheus
-- goplot_collector.sh is run by cron every minute and sends custom goplot stats to prometheus
-- getfarm_collector.sh is run by cron every minute and sends custom chia farm stats to prometheus
+- goplot.sh is the main script and runs continuously in the background; calls tractor.sh to start new parallel plots according to your configuration
+- tractor.sh is called by goplot.sh to start a new plot; logs details and sends annotations to Grafana
+- diskhand.sh is run by cron every two minutes; keeps an eye on disk space and provides disks for tractor; takes disks out of rotation when filled
+- farmerlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, sends the data to prometheus
+- goplot_collector.sh is run by cron every minute; sends custom goplot stats to prometheus
+- getfarm_collector.sh is run by cron every minute; sends custom chia farm stats to prometheus
