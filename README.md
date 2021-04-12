@@ -3,6 +3,13 @@ goplot
 
 goplot is a manager for chia farms written in bash!
 
+Development of goplot was based on these principles:
+
+  1. The core of Chia farming is basically file management operations, and Linux is the best general OS for filesystem management.
+  2. Core bash tools already integrated into the Linux OS support most functions needed in a Chia farm.
+  3. Bash and bash scripts are highly accessible by both beginners and seasoned Linux experts.
+  4. Monitoring needs are best met using open source tools, supplemented with custom scripts to get the data into the data store.
+
 Requirements
 ------------
 
