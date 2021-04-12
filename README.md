@@ -64,7 +64,7 @@ The expected mount point for temp drives is under /plot_temp and for destination
 
 A common farm configuration is to have external USB destination drives attached to a combined plotter/farmer. If the system has both front and back USB 3.0 ports then they are likely on different IO busses to the mainboard, meaning plots can be copied over both at the same time without USB contention. If both busses are to be used for plot destinations then the plotter is configured with two destination farms. For example, two farms are reflected in the file system as:
 
-  /farm/1
+  /farm/1 /n
   /farm/2
 
 Similarly, a common plotter configuration is to have multiple temp drives, each of which has dedicated PCIe lanes, and these are separate busses that can be used at the same time without IO contention. Some people may combine these in a mkadm RAID 0, others may want to use the individual drives. Either is supported by goplot, and if individual drives are used then each is designated as a different farm number in the file system as:
