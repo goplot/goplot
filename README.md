@@ -1,7 +1,7 @@
 goplot
 =========
 
-goplot is a manager for chia farms written in bash!
+Goplot is a manager for chia farms written in bash!
 
 Development of goplot was based on these principles:
 
@@ -85,7 +85,7 @@ Plot destination farms are made up of "disks" which are named at the time the dr
   /farm/1/disk5 \
   /farm/2/disk2 \
   /farm/2/disk4 \
-  /farm/2/disk6 \
+  /farm/2/disk6 
 
 **Plots Directory**
 
