@@ -25,9 +25,9 @@ Uses
 
 You can use goplot to:
 
-  1. Pace your parallel plotting
-  2. Monitor eligible plots passing the plot filter
-  3. Monitor your farm space
+  1. Pace and monitor the performance of your parallel plotting.
+  2. Monitor eligible plots passing the plot filter.
+  3. Monitor your farm space.
   4. Assess your XCH wins!
 
 Scripts
