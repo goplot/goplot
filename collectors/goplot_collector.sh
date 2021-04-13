@@ -22,28 +22,28 @@ echo "# TYPE goplot_config_ontoggle gauge"
 echo "goplot_config_ontoggle" $on_toggle
 fi
 max_plots_file="${config_dir}/max_plots.goplot"
-if [ -f "$on_toggle_file" ]; then
+if [ -f "$max_plots_file" ]; then
 max_plots=$(tail -n1 "$max_plots_file")
 echo "# HELP goplot_config_maxplots goplot configured maximum parallel plots"
 echo "# TYPE goplot_config_maxplots gauge"
-echo "goplot_config_maxplots" $goplot_config_maxplots
+echo "goplot_config_maxplots" $max_plots
 fi
 load_max_file="${config_dir}/load_max.goplot"
-if [ -f "$on_toggle_file" ]; then
+if [ -f "$load_max_file" ]; then
 load_max=$(tail -n1 "$load_max_file")
 echo "# HELP goplot_config_loadmax goplot configured load_max"
 echo "# TYPE goplot_config_loadmax gauge"
-echo "goplot_config_loadmax" $load_max_file
+echo "goplot_config_loadmax" $load_max
 fi
 plot_poll_file="${config_dir}/plot_poll.goplot"
-if [ -f "$on_toggle_file" ]; then
+if [ -f "$plot_poll_file" ]; then
 plot_poll=$(tail -n1 "$plot_poll_file")
 echo "# HELP goplot_config_plotpoll goplot configured plot poll length"
 echo "# TYPE goplot_config_plotpoll gauge"
 echo "goplot_config_plotpoll" $plot_poll
 fi
 plot_gap_file="${config_dir}/plot_gap.goplot"
-if [ -f "$on_toggle_file" ]; then
+if [ -f "$plot_gap_file" ]; then
 plot_gap=$(tail -n1 "$plot_gap_file")
 echo "# HELP goplot_config_plot_gap goplot configured plot gap length"
 echo "# TYPE goplot_config_plot_gap gauge"

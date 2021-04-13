@@ -1,9 +1,4 @@
 #!/bin/bash
-# Enter your Grafana API key here enclosed in single quotes
-# The API key can be created in your Grafana portal at http://localhost:3000/org/apikeys
-grafana_api_key='myAPIkey'
-# This is the annotations URL on the localhost, change if this script is not being run on the Grafana host
-grafana_url="http://localhost:3000/api/annotations/graphite"
 # Set the working directory for the script
 working_dir="/etc/chia/goplot"
 # Set the location for the log file
