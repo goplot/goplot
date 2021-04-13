@@ -77,42 +77,54 @@ The expected mount point for temp drives is under /plot_temp and for destination
 
 A common farm configuration is to have external USB destination drives attached to a combined plotter/farmer. If the system has both front and back USB 3.0 ports then they are likely on different IO busses to the mainboard, meaning plots can be copied over both at the same time without USB contention. If both busses are to be used for plot destinations then the plotter is configured with two destination farms. For example, two destination farms are reflected in the file system as:
 
-  /farm/1 \
+```
+  /farm/1
   /farm/2
+```
 
 Similarly, a common plotter configuration is to have multiple temp drives, each of which has dedicated PCIe lanes, and these are separate busses that can be used at the same time without IO contention. Some people may combine these in a mkadm RAID 0, others may want to use the individual drives. Either is supported by goplot, and if individual temp drives are used then each is designated as a different farm number in the file system as:
 
-  /plot_temp/1 \
+```
+  /plot_temp/1
   /plot_temp/2
+```
 
 If the temp drives are combined into the same RAID0 then there is only one temp farm designated in the file system as:
 
+```
   /plot_temp/1
+```
 
 **Disks**
 
 Plot destination farms are made up of "disks" which are named at the time the drive is mounted to the farm directory. It is recommended that you adopt a simple naming standard such as "disk1, disk2, disk3" etc. Each disk should be mounted to the farm directory that designates the physical bus the drive is attached to. In the above example, let's say the farmer/plotter has two USB 3.0 busses, each connecting to a four-port USB hub, and each hub has three external drives attached. In this example odd-numbered disks are attached to farm 1 (hub 1) and even-numbered disks are attached to farm 2 (hub 2). This configuration would be represented in the file system as:
 
-  /farm/1/disk1 \
-  /farm/1/disk3 \
-  /farm/1/disk5 \
-  /farm/2/disk2 \
-  /farm/2/disk4 \
+```
+  /farm/1/disk1
+  /farm/1/disk3
+  /farm/1/disk5
+  /farm/2/disk2
+  /farm/2/disk4
   /farm/2/disk6 
+```
 
 **Plots Directory**
 
 Plots are contained in a plots directory for both temp and destination farms. This allows for easy deletion of tmp files that may be left over after a plot gets "stuck" and has to be killed at the process level. All disks need a plots directory and all temp farms need a plots directory. For example, a simple farmer/plotter with only one temp drive and only one destination drive would be represented in the filesystem as:
 
-  /farm/1/disk1/plots \
+```
+  /farm/1/disk1/plots
   /plot_temp/1/plots
+```
 
 **Plot Logs Directory**
 
 The log output from each run of "chia plots create" is output to a logs directory on the destination drive. You may never need them, but who knows! The logs directory needs to be on each destination drive, such as:
 
-  /farm/1/disk1/logs \
+```
+  /farm/1/disk1/logs
   /farm/2/disk2/logs
+```
 
 **Goplot Logs Directory**
 
@@ -169,7 +181,7 @@ This behavior results in goplot filling up disks from the bottom up. If you want
 
 diskhand.sh should be configured as a cron job to run every two minutes, as with this example crontab entry:
 
-*/2 * * * * /etc/chia/goplot/diskhand.sh
+  `*/2 * * * * /etc/chia/goplot/diskhand.sh`
 
 diskhand.sh overwrites a new log file with every run in logs/diskhand.log.
 
