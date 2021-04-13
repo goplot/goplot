@@ -23,10 +23,23 @@ You can use goplot to:
   5. Assess your XCH wins!
   6. Inspire your own project.
 
-
-Requirements
+Other Options
 ------------
 
+Goplot is not for everyone. It assumes knowledge of Linux and willingness to tinker with bash scripts. You will need to learn a little something about doing custom dashboards in Grafana. It was developed mainly with concern for management and monitoring of massively parallel plotting. There are a few other options worth looking at that may either do what you want better than goplot or may supplement goplot:
+
+  1. Chia default graphical interface; https://github.com/Chia-Network/chia-blockchain/wiki/INSTALL
+    - Probably the best choice for a simple farm, likely to get more features over time
+  2. Plotman; https://github.com/ericaltendorf/plotman
+    - Probably a better choice if you want to use and play around with Python
+  3. Chiadog; https://github.com/martomi/chiadog
+    - For monitoring more than plotting management
+
+
+Required Software
+------------
+
+- Chia blockchain
 - Linux
   - goplot was developed on Ubuntu 20.04
 - Prometheus 
@@ -169,4 +182,76 @@ tractor.sh is the script called by goplot.sh to start a new plot. By keeping tra
 
 Installation
 ------------
+
+**Note:** Goplot assumes it is located in /etc/chia/goplot. If you change this location then you will either need to change the $working_dir variable in the scripts or create a symlink to your actual location.
+
+**Note** Goplot assumes the Chia blockchain directory is /etc/chia/chia-blockchain. If you change this location then you will either need to change the $chia_venv_dir variable in the scripts or create a symlink to your actual location.
+
+**Install the required software**
+
+You will first need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! If you are not already familiar with Linux then you may want to look at some of the alternatives listed above or prepare for a steep learning curve. 
+
+There are many excellent guides out there for installing Prometheus and Grafana, just be sure you can login to the Grafana admin page and pull up the public node_exporter dashboard before you continue. The node_exporter itself is easy to setup; be sure to put the textfile directory in the launch command as a startup option.
+
+**Setup destination and temp directories**
+
+Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your drives and create your *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure should look something like this:
+
+```
+/farm/1/disk1/plots
+/farm/1/disk1/logs
+/farm/1/disk2/plots
+/farm/1/disk2/logs
+/farm/2/disk3/plots
+/farm/2/disk3/logs
+/farm/2/disk4/plots
+/farm/2/disk4/logs
+/plot_temp/1/plots
+```
+
+**Git clone goplot**
+
+To get goplot just clone this repository from the system you want to install it on, ideally from the /etc/chia directory:
+
+  `git clone https://github.com/goplot/goplot.git`
+
+Now change to the goplot directory and run the getgoplot.sh script to see the default goplot configuration:
+
+  `./getgoplot.sh`
+
+You should also be able to run diskhand.sh and look at its log to see that it properly discovers your destination farm disks. It will report errors the first time it tries to read a new disk file, this is normal.
+
+```
+./diskhand.sh
+cat logs/diskhand.log
+```
+
+**Set configuration parameters**
+
+You can set each tunable goplot configuration parameter by echoing the value you want to set to that parameter's config file. For instance, to set the minimum time between plots from the goplot root directory you would enter
+
+  `echo "1400" > config/plot_gap.goplot`
+
+It can be hard to know exactly how to set these to start. The best thing to do is run a single plot as a benchmark and make estimations based on that. You can also get ideas from the chia Keybase channels, or consider these values, assuming k=32 size plots and 2 threads per plot, and no limitations on memory or temp drive space:
+
+  1. Set max_plots.goplot to 1 parallel plot per physical CPU core
+  2. Assume 36000 second plot time
+  3. Set plot_gap.goplot to: plot_time / max_plots.
+
+**Configure cron jobs**
+
+Cron jobs are required for diskhand.sh and for getfarm_collector.sh and goplot_collector.sh. The `sponge` tool is used to soak up the output of the collector scripts and output it all at once to the collector .prom file; this prevents problems with the file being written to at the same time Prometheus is trying to scrape it. The system crontab can be edited with the command:
+
+  `sudo crontab -e`
+
+Create three entries that look something like this:
+
+```
+*/2 * * * * /etc/chia/goplot/diskhand.sh
+*/1 * * * * /etc/chia/goplot/collectors/goplot_collector.sh | sponge > /etc/prometheus/collectors/goplotstats.prom
+*/1 * * * * /etc/chia/goplot/collectors/getfarm_collector.sh | sponge > /etc/prometheus/collectors/farmstats.prom
+```
+
+  4. Set on_toggle.goplot to "run"
+
 
