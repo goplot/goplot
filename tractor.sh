@@ -82,8 +82,12 @@ if [ -f "$on_toggle_file" ]; then
 		for disk in ${disks[@]}; do
 			new_size=$(tail -n1 "$disk_dir/${disk}.goplot")
 			if (( new_size < size )); then
-				size=$new_size
-				my_disk=${disk}
+				if [ -d "${plots_farm_path}/${disk}/plots" ] && [ -d "${plots_farm_path}/${disk}/logs" ]; then
+					size=$new_size
+					my_disk=${disk}
+				else
+					echo "$(date) - prejob   : WARNING - directories have not been created on ${plots_farm_path}/${disk}"
+				fi
 			fi
 		done
 		# If the size has not changed then there must not be room for plotting on any disks, send an error to the log

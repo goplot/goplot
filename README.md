@@ -71,9 +71,9 @@ Concepts
 
 **Farms**
 
-Goplot uses the concept of "farms" to distribute IO to different IO busses for the destination drives and for the temp drives. As goplot starts new plots it will rotate through each farm to distribute the IO load. Each farm is assigned a number in sequence starting at "1". This value is communicated to goplot by a drive's mount point under the root directory of that mount point. 
+Goplot uses the concept of "farms" to distribute IO to different IO busses for the destination drives and for the temp drives. As goplot starts new plots it will rotate through each farm to distribute the IO load. Each farm is assigned a number in sequence starting at "1". The farm configuration is communicated to goplot by a drive's mount point. 
 
-The expected mount point for temp drives is under /plot_temp and for destination drives is under /farm.
+The expected mount point for temp drives is under `/plot_temp` and for destination drives is under `/farm`.
 
 A common farm configuration is to have external USB destination drives attached to a combined plotter/farmer. If the system has both front and back USB 3.0 ports then they are likely on different IO busses to the mainboard, meaning plots can be copied over both at the same time without USB contention. If both busses are to be used for plot destinations then the plotter is configured with two destination farms using the file system structure. For example, two destination farms are reflected in the file system as:
 
