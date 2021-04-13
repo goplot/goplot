@@ -3,9 +3,9 @@
 
 Goplot is a manager for chia farms written in bash!
 
-Development of goplot was based on these principles:
+Development of goplot was based on a few guiding principles:
 
-  1. The core of Chia farming is basically file management operations, and Linux is the best general OS for filesystem management.
+  1. The heart of Chia farming is basically file management operations, and Linux is the best general OS for filesystem management.
   2. Core bash tools already integrated into the Linux OS support most functions needed in a Chia farm.
   3. Bash and bash scripts are highly accessible for both beginners and seasoned Linux experts.
   4. Monitoring and visualization needs are best met using open source tools, supplemented with custom scripts to get the data.
@@ -64,6 +64,8 @@ The goplot package consists of the following shell scripts:
 - farmerlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, sends the data to prometheus
 - goplot_collector.sh is run by cron every minute; sends custom goplot stats to prometheus
 - getfarm_collector.sh is run by cron every minute; sends custom chia farm stats to prometheus
+- getgoplot.sh is basically the CLI output version of goplot_collector.sh; used to quickly check your goplot configuration from the CLI
+- getfarm.sh is basically the CLI output version of getfarm_collector.sh; used to quickly check your farm status from the CLI
 
 
 Concepts
@@ -71,7 +73,7 @@ Concepts
 
 **Farms**
 
-Goplot uses the concept of "farms" to distribute IO to different IO busses for the destination drives and for the temp drives. As goplot starts new plots it will rotate through each farm to distribute the IO load. Each farm is assigned a number in sequence starting at "1". The farm configuration is communicated to goplot by a drive's mount point. 
+Goplot uses the concept of **"farms"** to distribute IO to different IO busses for the destination drives and for the temp drives. As goplot starts new plots it will rotate through each farm to distribute the IO load. Each farm is assigned a number in sequence starting at "1". The farm configuration is communicated to goplot by a drive's mount point. 
 
 The expected mount point for temp drives is under `/plot_temp` and for destination drives is under `/farm`.
 
@@ -97,7 +99,7 @@ If the temp drives are combined into the same RAID0 then there is only one temp 
 
 **Disks**
 
-Plot destination farms are made up of "disks" which are named at the time the drive is mounted to the farm directory. It is recommended that you adopt a simple naming standard such as "disk1, disk2, disk3" etc. Each disk should be mounted to the farm directory that designates the physical bus the drive is attached to. In the above example, let's say the farmer/plotter has two USB 3.0 busses, each connecting to a four-port USB hub, and each hub has three external drives attached. In this example odd-numbered disks are attached to farm 1 (hub 1) and even-numbered disks are attached to farm 2 (hub 2). This configuration would be represented in the file system as:
+Plot destination farms are made up of **"disks"** which are named at the time the drive is mounted to the farm directory. It is recommended that you adopt a simple naming standard such as "disk1, disk2, disk3" etc. Each disk should be mounted to the farm directory that designates the physical bus the drive is attached to. In the above example, let's say the farmer/plotter has two USB 3.0 busses, each connecting to a four-port USB hub, and each hub has three external drives attached. In this example odd-numbered disks are attached to farm 1 (hub 1) and even-numbered disks are attached to farm 2 (hub 2). This configuration would be represented in the file system as:
 
 ```
   /farm/1/disk1
@@ -110,7 +112,7 @@ Plot destination farms are made up of "disks" which are named at the time the dr
 
 **Plots Directory**
 
-Plots are contained in a plots directory for both temp and destination farms. This allows for easy deletion of tmp files that may be left over after a plot gets "stuck" and has to be killed at the process level. All disks need a plots directory and all temp farms need a plots directory. For example, a simple farmer/plotter with only one temp drive and only one destination drive would be represented in the filesystem as:
+Plots are contained in a plots directory for both temp and destination farms. This allows for easy deletion of tmp files that may be left over after a plot gets "stuck" and has to be killed at the process level. All disks need a plots directory and all temp farms need a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be represented in the filesystem as:
 
 ```
   /farm/1/disk1/plots
@@ -156,20 +158,20 @@ goplot.sh can be started in the background from the goplot root directory with t
 
 **goplot.sh Configuration Files**
 
-goplot.sh has a few configuration variables that are kept in files in the "config" directory under the goplot root. This simple configuration uses one variable per file. The config directory also holds state files that are accessed on occasion, again one variable per file. Keeping tunable configuration parameters and state information in files allows them to be easily changed while the script is running; the new parameter can be echoed to the config file and the script will pick up the changes on the next loop. For instance, to configure goplot to start no more than 16 parallel plots this command can be used:
+goplot.sh has a few configuration variables that are kept in files in the "config" directory under the goplot root. This simple configuration uses one variable entry per file. The config directory also holds state files that are accessed on occasion, again one variable entry per file. Keeping goplot's tunable configuration parameters and state information in files allows them to be easily changed while the script is running; the new parameter can be echoed to the config file and the script will pick up the changes on the next loop. For instance, to configure goplot to start no more than 16 parallel plots this command can be used:
 
   `echo "16" > /etc/chia/goplot/config/max_plots.goplot`
 
 Here is a list of the config and state files and a short description of their purpose:
 
-  - on_toggle.goplot; must be set to "run" or goplot will stop on the next loop, used for graceful shutdown of goplot.sh
-  - plot_gap.goplot; the minimum length of time in seconds between new plots
-  - plot_poll.goplot; the minimum length of time in seconds between condition polls
-  - load_max.goplot; the goplot load value over which new plots will not be created
-  - max_plots; the maximum number of parallel plots that can be running at the same time
-  - index.goplot; the plot index number for this plotter, used in log files and to name the output plot log file
-  - farm_dest.goplot; the last destination farm number used by goplot.sh/tractor.sh
-  - farm_temp.goplot; the last temp farm number used by goplot.sh/tractor.sh
+  - *on_toggle.goplot*; must be set to "run" or goplot will stop on the next loop, used for graceful shutdown of goplot.sh
+  - *plot_gap.goplot*; the minimum length of time in seconds between new plots
+  - *plot_poll.goplot*; the minimum length of time in seconds between condition polls
+  - *load_max.goplot*; the goplot load value over which new plots will not be created
+  - *max_plots*; the maximum number of parallel plots that can be running at the same time
+  - *index.goplot*; the plot index number for this plotter, used in log files and to name the output plot log file
+  - *farm_dest.goplot*; the last destination farm number used by goplot.sh/tractor.sh
+  - *farm_temp.goplot*; the last temp farm number used by goplot.sh/tractor.sh
 
 **goplot.log**
 
@@ -179,7 +181,7 @@ Both goplot.sh and tractor.sh write log entries to goplot.log, which is located 
 
 **diskhand.sh**
 
-Much as a real farmer needs field hands to help work their fields, goplot needs diskhand.sh to manage disks. This is especially valuable when one wants to be gone from the plotter for a time without tending to it. Automatic disk management on plotters must take into account the fact that disk space is committed many hours before it is actually used. The job of diskhand is to find the disks listed under each farm, query them for available space, query running jobs to estimate committed space, determine if the disk has space left for plotting, then write the space used to the disk's file under the goplot disks directory. If there is not enough space available for plotting then diskhand will write a large value of "9999999999999" so tractor.sh will know it is not available.
+Much as a real farmer needs field hands to help work their fields, goplot needs diskhand.sh to manage disks. This is especially valuable when one wants to be gone from the plotter for a time without tending to it. Automatic disk management on plotters must take into account the fact that disk space is committed many hours before it is actually used. The job of diskhand.sh is to find the disks listed under each farm, query them for available space, query running jobs to estimate committed space, determine if the disk has space left for plotting, then write the space used to the disk's file under the goplot disks directory. If there is not enough space available for plotting then diskhand will write a large value of "9999999999999" so tractor.sh will know it is not available.
 
 Tractor.sh will always use the disk with the lowest amount of used space for the farm it has selected. This algorithm results in goplot reliably filling up disks from the bottom up. If you want to remove a disk from the rotation before it is filled you can echo a very large size to the disk file and that disk will be removed from rotation the next time diskhand runs, like this:
 
@@ -195,7 +197,7 @@ diskhand.sh overwrites a new log file with every run in logs/diskhand.log.
 
 **tractor.sh**
 
-tractor.sh is the script called by goplot.sh to start a new plot. By keeping tractor.sh a separate script it allows the parameters for "chia plots start" to be tuned between plots. Also you can use tractor.sh to manually start a plot outside of the usual goplot.sh polling cycle while still retaining the other goplot functions such as distributed farm loading and Grafana annotations. A new plot is easily started with the parameters defined in tractor.sh by running the script from the goplot root and sending it to the background like this:
+tractor.sh is the script called by goplot.sh to start a new plot. By keeping tractor.sh as a separate script it allows the parameters for "chia plots start" to be tuned between plots. Also you can use tractor.sh to manually start a plot outside of the usual goplot.sh polling cycle while still retaining the other goplot functions such as distributed farm loading and Grafana annotations. A new plot is easily started with the parameters defined in tractor.sh by running the script from the goplot root and sending it to the background like this:
 
   `./tractor.sh &`
 
@@ -211,13 +213,13 @@ Installation
 
 **Install the required software**
 
-You will first need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! If you are not already familiar with Linux then you may want to look at some of the alternatives listed above or prepare for a steep learning curve. 
+Before running goplot you need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! If you are not already familiar with Linux then you may want to look at some of the alternatives listed above or prepare for a steep learning curve. 
 
 There are many excellent guides out there for installing Prometheus and Grafana, just be sure you can login to the Grafana admin page and pull up the public node_exporter dashboard before you continue. The node_exporter itself is easy to setup; be sure to put the textfile directory in the launch command as a startup option.
 
 **Setup destination and temp directories**
 
-Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your drives and create your *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure should look something like this:
+Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your drives and create your *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure for plotting should look something like this:
 
 ```
 /farm/1/disk1/plots
@@ -241,7 +243,7 @@ Now change to the goplot directory and run the getgoplot.sh script to see the de
 
   `./getgoplot.sh`
 
-You should also be able to run diskhand.sh and look at its log to see that it properly discovers your destination farm disks. It will report errors the first time it tries to read a new disk file, this is normal.
+You should also be able to run diskhand.sh and look at its log to see that it properly discovers your destination farm disks. tail will report errors the first time it tries to read a new disk file, this is normal.
 
 ```
 ./diskhand.sh
@@ -254,11 +256,13 @@ You can set each tunable goplot configuration parameter by echoing the value you
 
   `echo "1400" > config/plot_gap.goplot`
 
-It can be hard to know exactly how to set these to start. The best thing to do is run a single plot as a benchmark and make estimations based on that. You can also get ideas from the chia Keybase channels, or consider these values, assuming k=32 size plots and 2 threads per plot, and no limitations on memory or temp drive space:
+It can be hard to know exactly how to set your parallel plotting parameters to start. The best thing to do is run a single plot as a benchmark and make estimations based on that. You can also get ideas from the chia Keybase channels, or consider the values given below, assuming k=32 size plots and 2 threads per plot, and no significant bottlenecks on memory or SSD temp drive space/performance:
 
   1. Set max_plots.goplot to 1 parallel plot per physical CPU core
-  2. Assume 36000 second plot time
+  2. Assume 36000 second plot time (10 hours)
   3. Set plot_gap.goplot to: plot_time / max_plots.
+
+  For example, with a 8 core system you can start with max_plots=8 and plot_gap=4500 for what should be a relatively safe run, and you can modify your configuration over time to find your plotter's sweet spot.
 
 **Configure cron jobs**
 
@@ -296,7 +300,7 @@ Now start goplot.sh to run in the background by running this command from the go
 
   `./goplot.sh &`
 
-If everything is setup right you will probably see some messages about plot creation and Grafana annotations. Regardless, tail the goplot log file to see what is happening:
+If everything is setup right you will probably see some console messages about plot creation and Grafana annotations. Regardless, tail the goplot log file to see what is happening:
 
   `tail -f logs/goplot.log`
 
@@ -305,11 +309,12 @@ If a plot has not started then you will need to troubleshoot your configuration.
 Running and Tuning Tips
 ------------
 
-- When figuring out your plot pacing you will find that every system has a sweet spot where it will perform best, and subtle attempts to push the system to produce more will result in less consistent pacing but about the same yield. You know you have exceeded the sweet spot if plot pacing suddenly gets much less consistent and the processor is pegged at the same high level for long periods of time and your yield is less.
-- You will find that once you get your plotter spun up you can plot continuously and you will not need to spin it down to make modifications to your pacing, plot settings, or chia software.
+- When figuring out your plot pacing you will find that every system has its own sweet spot where it will perform best, and subtle attempts to push the system to produce more will result in less consistent pacing but about the same yield. 
+- You know you have exceeded the sweet spot for your system if plot pacing suddenly gets much less consistent and the processor is pegged at the same high level for long periods of time and your yield is less.
+- You will find that once you get your plotter spun up to its full number of parallel plots you can plot continuously and you will not need to spin it down to make modifications to your pacing, plot settings, chia software, or destination drives.
 - Diskhand.sh can be run at any time to see the current state of disk space availability.
-- After you mount a new disk and create the *plots* and *logs* directories run diskhand.sh and check logs/diskhand.log to be sure your disk was recognized and is ready for plotting.
+- After you mount a new disk and create the *plots* and *logs* directories run `./diskhand.sh` and `cat logs/diskhand.log` to be sure your disk was recognized and is ready for plotting.
 - To change `chia plots start` variables edit them in tractor.sh.
-- You can manually experiment with plot pacing by setting the plot_gap to a high number and then running tractor.sh manually.
+- You can manually experiment with plot pacing by setting the plot_gap to a high number and then running `./tractor.sh &` manually.
 - Changes to Chia software plotting capabilities are likely to cause changes in your plotter pacing, and you may need to adjust your configuration to get the best from your plotter.
 - Older versions of chia software can still be used for plotting; just install that version in a different directory from your main chia farmer/harvester directory and change the `$chia_venv_dir` variable in tractor.sh to that directory.
