@@ -251,7 +251,21 @@ Create three entries that look something like this:
 */1 * * * * /etc/chia/goplot/collectors/goplot_collector.sh | sponge > /etc/prometheus/collectors/goplotstats.prom
 */1 * * * * /etc/chia/goplot/collectors/getfarm_collector.sh | sponge > /etc/prometheus/collectors/farmstats.prom
 ```
+**Start farmerlog.sh**
 
-  4. Set on_toggle.goplot to "run"
+Start farmerlog.sh so that it runs in the background by running this command from the goplot root:
 
+  `./farmerlog.sh &`
+
+**Start goplot.sh**
+
+Before you start goplot you need to set on_toggle.goplot to "run":
+
+  `echo "run" > config/on_toggle.goplot`
+
+If you ever want to stop goplot gracefully you can set this file to any other value and the script will stop after it reads the parameter at the start of the next polling action.
+
+Now start goplot.sh to run in the background by running this command from the goplot root:
+
+  `./goplot.sh &`
 
