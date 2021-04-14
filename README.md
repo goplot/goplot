@@ -16,7 +16,7 @@ Uses
 
 You can use goplot to:
 
-  1. Automatically start and pace plots on your plotter.
+  1. Automatically start and pace parallel plots on your plotter.
   2. Monitor the performance of your parallel plotting.
   3. Monitor eligible plots passing the plot filter.
   4. Monitor your farm space.
@@ -329,6 +329,7 @@ You will also want to see the remote harvester's eligible plots in your dashboar
   `./farmerlog.sh &`
 
 You should now see farm space, farm plots, and eligible plots metrics for the remote harvester in your Grafana dashboard.
+
 
 Remote Plotters
 ------------
