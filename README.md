@@ -10,6 +10,8 @@ Development of goplot was based on a few guiding principles:
   3. Bash and bash scripts are highly accessible for both beginners and seasoned Linux experts.
   4. Monitoring and visualization needs are best met using open source tools, supplemented with custom scripts to get the data.
 
+**Note:** goplot is not for the faint of heart or fair weather novices! It is not a simple thing that you just install, but rather a suite of open source tools glued together with bash scripts. There is an xkcd for this... https://xkcd.com/1742/ 
+
 
 Uses
 ------------
@@ -61,7 +63,7 @@ The goplot package consists of the following shell scripts:
 - goplot.sh is the main script and runs continuously in the background; calls tractor.sh to start new parallel plots according to your configuration
 - tractor.sh is called by goplot.sh to start a new plot; logs details and sends annotations to Grafana
 - diskhand.sh is run by cron every two minutes; keeps an eye on disk space and provides disks for plotting; takes disks out of rotation when filled
-- farmerlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, sends the data to prometheus
+- harvesterlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, sends the data to prometheus
 - goplot_collector.sh is run by cron every minute; sends custom goplot stats to prometheus
 - getfarm_collector.sh is run by cron every minute; sends custom chia farm stats to prometheus
 - getharvester_collector.sh is run on a remote harvester by cron every minute; sends custom chia farm stats to prometheus
@@ -297,11 +299,11 @@ Create three entries that look something like this:
 Edit tractor.sh and set the value for the `$grafana_api_key` variable to your Grafana API key inside single quotes. 
 
 
-**Start farmerlog.sh**
+**Start harvesterlog.sh**
 
-Start farmerlog.sh so that it runs in the background by running this command from the goplot root:
+Start harvesterlog.sh so that it runs in the background by running this command from the goplot root:
 
-  `./farmerlog.sh &`
+  `./harvesterlog.sh &`
 
 Then use `disown` to keep the script running when you logout.
 
@@ -342,9 +344,9 @@ Once the basic setup is complete you can add the custom metrics. From the remote
 
   `*/1 * * * * /etc/chia/goplot/collectors/getharvester_collector.sh | sponge > /etc/prometheus/collectors/harvesterstats.prom`
 
-You will also want to see the remote harvester's eligible plots in your dashboard, so run farmerlog.sh in the background as you did on the main farmer:
+You will also want to see the remote harvester's eligible plots in your dashboard, so run harvesterlog.sh in the background as you did on the main farmer:
 
-  `./farmerlog.sh &`
+  `./harvesterlog.sh &`
 
 You should now see farm space, farm plots, and eligible plots metrics for the remote harvester in your Grafana dashboard. Remember to use `disown` to keep the script running when you logout.
 
