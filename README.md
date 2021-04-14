@@ -220,12 +220,12 @@ Installation
 
 **Note:** Goplot assumes it is located in /etc/chia/goplot. If you change this location then you will either need to change the $working_dir variable in the scripts or create a symlink to your actual location.
 
-**Note** Goplot assumes the Chia blockchain directory is /etc/chia/chia-blockchain. If you change this location then you will either need to change the $chia_venv_dir variable in the scripts or create a symlink to your actual location.
+**Note:** Goplot assumes the Chia blockchain directory is /etc/chia/chia-blockchain. If you change this location then you will either need to change the $chia_venv_dir variable in the scripts or create a symlink to your actual location.
 
 
 **Install the required software**
 
-Before running goplot you need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! If you are not already familiar with Linux then you may want to look at some of the alternatives listed above or prepare for a steep learning curve. 
+Before running goplot you need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! If you are not already familiar with Linux then you may want to use the official GUI, or prepare for a steep learning curve. 
 
 There are many excellent guides out there for installing Prometheus and Grafana, just be sure you can login to the Grafana admin page and pull up the public node_exporter dashboard before you continue. The node_exporter itself is easy to setup; be sure to put the textfile directory in the launch command as a startup option.
 
@@ -265,7 +265,7 @@ cat logs/diskhand.log
 
 **Set configuration parameters**
 
-You can set each tunable goplot configuration parameter by echoing the value you want to set to that parameter's config file. For instance, to set the minimum time between plots from the goplot root directory you would enter
+You can set each tunable goplot configuration parameter by echoing the value you want to set to that parameter's config file. For instance, to set the minimum time between plots you would enter this from the goplot root directory:
 
   `echo "1400" > config/plot_gap.goplot`
 
@@ -301,7 +301,9 @@ Edit tractor.sh and set the value for the `$grafana_api_key` variable to your Gr
 
 Start farmerlog.sh so that it runs in the background by running this command from the goplot root:
 
-  `nohup ./farmerlog.sh &`
+  `./farmerlog.sh &`
+
+Then use `disown` to keep the script running when you logout.
 
 **Start goplot.sh**
 
@@ -319,7 +321,9 @@ If everything is setup right you will probably see some console messages about p
 
   `tail -f logs/goplot.log`
 
-If a plot has not started then you will need to troubleshoot your configuration. If goplot.sh starts and runs but there is a problem running tractor.sh then you can leave goplot running while you work on tractor and goplot will try to use your modified tractor on the next scheduled run. When you are first getting setup it is common to have a few false starts and you may decide you need to kill the goplot.sh process manually, especially if your plot_gap is very long and you want to see a plot start.
+If a plot has not started then you will need to troubleshoot your configuration. If goplot.sh starts and runs but there is a problem running tractor.sh then you can leave goplot running while you work on tractor and goplot will try to use your modified tractor on the next scheduled run. When you are first getting set up it is common to have a few false starts and you may decide you need to kill the goplot.sh process manually, especially if your plot_gap is very long and you want to see a plot start soon.
+
+After goplot.sh is started use `disown` to keep the script running when you logout.
 
 
 Remote Harvesters
@@ -342,13 +346,13 @@ You will also want to see the remote harvester's eligible plots in your dashboar
 
   `./farmerlog.sh &`
 
-You should now see farm space, farm plots, and eligible plots metrics for the remote harvester in your Grafana dashboard.
+You should now see farm space, farm plots, and eligible plots metrics for the remote harvester in your Grafana dashboard. Remember to use `disown` to keep the script running when you logout.
 
 
 Remote Plotters
 ------------
 
-The setup for a remote plotter is a combination of the main farmer and the remote harvester. This is an advanced topic so if you are that far along then you can probably figure out the details for yourself; setup goplot as on the main farmer, setup the remote harvester configuration, and then if you want Grafana plot_start and plot_end annotations then you will also need to be sure the remote plotter can communicate with Grafana port 3000. Change the $grafana_url variable in tractor.sh to point to the Grafana host and (if desired) modify the annotation tags.
+The setup for a remote plotter is a combination of the main farmer and the remote harvester. This is an advanced topic so if you are that far along then you can probably figure out the details for yourself with a little guidance; setup goplot as on the main farmer, setup the remote harvester configuration, and then if you want Grafana plot_start and plot_end annotations then you will also need to be sure the remote plotter can communicate with Grafana port 3000. Change the $grafana_url variable in tractor.sh to point to the Grafana host and (if desired) modify the annotation tags.
 
 
 Running and Tuning Tips
@@ -359,7 +363,8 @@ Running and Tuning Tips
 - You will find that once you get your plotter spun up to its full number of parallel plots you can plot continuously and you will not need to spin it down to make modifications to your pacing, plot settings, chia software, or destination drives.
 - Diskhand.sh can be run at any time to see the current state of disk space availability.
 - After you mount a new disk and create the *plots* and *logs* directories run `./diskhand.sh` and `cat logs/diskhand.log` to be sure your disk was recognized and is ready for plotting.
-- To change `chia plots start` variables edit them in tractor.sh.
+- If cron runs diskhand.sh while you are in the process of creating and mounting a new disk it may create a disk file for that disk with size 99999999999999. If this happens just delete that disk file and let diskhand.sh run again.
+- To change `chia plots start` command line parameters edit their variables in tractor.sh.
 - You can manually experiment with plot pacing by setting the plot_gap to a high number and then running `./tractor.sh &` manually.
 - Changes to Chia software plotting capabilities are likely to cause changes in your plotter pacing, and you may need to adjust your configuration to get the best from your plotter.
 - Older versions of chia software can still be used for plotting; just install that version in a different directory from your main chia farmer/harvester directory and change the `$chia_venv_dir` variable in tractor.sh to that directory.
