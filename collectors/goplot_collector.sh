@@ -17,9 +17,14 @@ echo "goplot_running_plots" $num_active_plots
 on_toggle_file="${config_dir}/on_toggle.goplot"
 if [ -f "$on_toggle_file" ]; then
 on_toggle=$(tail -n1 "$on_toggle_file")
+if [[ $on_toggle == "run" ]];  then
+on_toggle_value=1
+else
+on_toggle_value=0
+fi
 echo "# HELP goplot_config_ontoggle goplot on_toggle state"
 echo "# TYPE goplot_config_ontoggle gauge"
-echo "goplot_config_ontoggle" $on_toggle
+echo "goplot_config_ontoggle" $on_toggle_value
 fi
 max_plots_file="${config_dir}/max_plots.goplot"
 if [ -f "$max_plots_file" ]; then

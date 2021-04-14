@@ -37,7 +37,7 @@ if [ -f "$on_toggle_file" ]; then
 		bitfield=""
         # Get the last destination farm used from the farm state file
 		dest_farm_file="${config_dir}/farm_dest.goplot"
-		last_dest_farm=$(tail -n1 "$dest_farm_file")
+		last_dest_farm=$(tail -n1 "${dest_farm_file}")
         # Set the destination farm path
         dest_farms_path="/farm"
         # Find the destination farms, put them in a list
@@ -46,14 +46,14 @@ if [ -f "$on_toggle_file" ]; then
         # Set the number of destination farms found
         num_dest_farms=$(echo ${dest_farms[@]})
         # Set the destination farm to use on this plot, just increment the last farm by 1
-        my_dest_farm=(( last_dest_farm + 1 ))
+        my_dest_farm=$(( last_dest_farm + 1 ))
         # If the farm number is greater than the farms available then set the plot to use farm 1
 		if (( my_dest_farm > num_dest_farms )); then
 			my_dest_farm=1
 		fi
         # Get the last temp farm used from the farm state file
 		temp_farm_file="${config_dir}/farm_temp.goplot"
-		last_temp_farm=$(tail -n1 "$dest_farm_file")
+		last_temp_farm=$(tail -n1 "${temp_farm_file}")
         # Set the plot temp drive path
         temp_farms_path="/plot_temp"
         # Find the temp farms, put them in a list
@@ -62,7 +62,7 @@ if [ -f "$on_toggle_file" ]; then
         # Set the number of destination farms found
         num_temp_farms=$(echo ${temp_farms[@]})
         # Set the temp farm to use on this plot, just increment the last farm by 1
-        my_temp_farm=(( last_temp_farm + 1 ))
+        my_temp_farm=$(( last_temp_farm + 1 ))
         # If the farm number is greater than the farms available then set the plot to use farm 1
 		if (( my_temp_farm > num_temp_farms )); then
 			my_temp_farm=1

@@ -64,6 +64,7 @@ The goplot package consists of the following shell scripts:
 - farmerlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, sends the data to prometheus
 - goplot_collector.sh is run by cron every minute; sends custom goplot stats to prometheus
 - getfarm_collector.sh is run by cron every minute; sends custom chia farm stats to prometheus
+- getharvester_collector.sh is run on a remote harvester by cron every minute; sends custom chia farm stats to prometheus
 - getgoplot.sh is basically the CLI output version of goplot_collector.sh; used to quickly check your goplot configuration from the CLI
 - getfarm.sh is basically the CLI output version of getfarm_collector.sh; used to quickly check your farm status from the CLI
 
@@ -112,11 +113,11 @@ Plot destination farms are made up of **"disks"** which are named at the time th
 
 **Plots Directory**
 
-Plots are contained in a plots directory for both temp and destination farms. This allows for easy deletion of tmp files that may be left over after a plot gets "stuck" and has to be killed at the process level. All disks need a plots directory and all temp farms need a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be represented in the filesystem as:
+Plots are contained in a plots directory on the destination farms. All disks need a plots directory to hold plots. Temp drives do not have a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be represented in the filesystem as:
 
 ```
   /farm/1/disk1/plots
-  /plot_temp/1/plots
+  /plot_temp/1
 ```
 
 **Plot Logs Directory**
@@ -219,7 +220,7 @@ There are many excellent guides out there for installing Prometheus and Grafana,
 
 **Setup destination and temp directories**
 
-Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your drives and create your *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure for plotting should look something like this:
+Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your destination drives and create their *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure for plotting should look something like this:
 
 ```
 /farm/1/disk1/plots
@@ -230,7 +231,7 @@ Remember that the directory structure tells goplot how to distribute load across
 /farm/2/disk3/logs
 /farm/2/disk4/plots
 /farm/2/disk4/logs
-/plot_temp/1/plots
+/plot_temp/1
 ```
 
 **Git clone goplot**
@@ -256,7 +257,7 @@ You can set each tunable goplot configuration parameter by echoing the value you
 
   `echo "1400" > config/plot_gap.goplot`
 
-It can be hard to know exactly how to set your parallel plotting parameters to start. The best thing to do is run a single plot as a benchmark and make estimations based on that. You can also get ideas from the chia Keybase channels, or consider the values given below, assuming k=32 size plots and 2 threads per plot, and no significant bottlenecks on memory or SSD temp drive space/performance:
+Provided you are not already limited by RAM or SSD temp drive space it can be hard to know exactly how to set your parallel plotting parameters to start. The best thing to do is run a single plot as a benchmark and make estimations based on that. You can also get ideas from the chia Keybase channels, or consider the values given below, assuming k=32 size plots and 2 threads per plot, and no significant bottlenecks on memory or SSD temp drive space/performance:
 
   1. Set max_plots.goplot to 1 parallel plot per physical CPU core
   2. Assume 36000 second plot time (10 hours)
@@ -286,7 +287,7 @@ Edit tractor.sh and set the value for the `$grafana_api_key` variable to your Gr
 
 Start farmerlog.sh so that it runs in the background by running this command from the goplot root:
 
-  `./farmerlog.sh &`
+  `nohup ./farmerlog.sh &`
 
 **Start goplot.sh**
 
@@ -304,7 +305,36 @@ If everything is setup right you will probably see some console messages about p
 
   `tail -f logs/goplot.log`
 
-If a plot has not started then you will need to troubleshoot your configuration.
+If a plot has not started then you will need to troubleshoot your configuration. If goplot.sh starts and runs but there is a problem running tractor.sh then you can leave goplot running while you work on tractor and goplot will try to use your modified tractor on the next scheduled run. When you are first getting setup it is common to have a few false starts and you may decide you need to kill the goplot.sh process manually, especially if your plot_gap is very long and you want to see a plot start.
+
+
+Remote Harvesters
+------------
+
+Remote harvesters have farm plots and farm space metrics that need to be in Prometheus for a full picture of the farm to be possible. This is accomplished by running a modifed version of getfarm_collector.sh on the harvester called getharvester_collector.sh. 
+
+Here are the high level steps you must go through to enable remote harvester metric collection:
+
+  1. Install Prometheus node_exporter on the remote harvester with the textfile collector setup much as you did for your main farmer. You do not need to install the prometheus data store or Grafana on the harvester.
+  2. Verify that the farmer is able to access the remote harvester node_exporter data on port 9100.
+  3. Add the remote harvester node_exporter port to the main farmer's Prometheus configuration.
+  4. Verify that the standard remote harvester node_exporter metrics are viewable in Grafana.
+
+Once the basic setup is complete you can add the custom metrics. From the remote harvester setup a cron job like this:
+
+  `*/1 * * * * /etc/chia/goplot/collectors/getharvester_collector.sh | sponge > /etc/prometheus/collectors/harvesterstats.prom`
+
+You will also want to see the remote harvester's eligible plots in your dashboard, so run farmerlog.sh in the background as you did on the main farmer:
+
+  `./farmerlog.sh &`
+
+You should now see farm space, farm plots, and eligible plots metrics for the remote harvester in your Grafana dashboard.
+
+Remote Plotters
+------------
+
+The setup for a remote plotter is a combination of the main farmer and the remote harvester. This is an advanced topic so if you are that far along then you can probably figure out the details for yourself; setup goplot as on the main farmer, setup the remote harvester configuration, and then if you want Grafana plot_start and plot_end annotations then you will also need to be sure the remote plotter can communicate with Grafana port 3000. Change the $grafana_url variable in tractor.sh to point to the Grafana host and (if desired) modify the annotation tags.
+
 
 Running and Tuning Tips
 ------------

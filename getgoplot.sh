@@ -13,6 +13,7 @@ fi
 echo "goplot_running_plots" $num_active_plots
 on_toggle_file="${config_dir}/on_toggle.goplot"
 if [ -f "$on_toggle_file" ]; then
+on_toggle=$(tail -n1 "$on_toggle_file")
 echo "on_toggle.goplot:" $on_toggle
 else
 echo "on_toggle.goplot does not exist"
