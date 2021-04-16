@@ -148,18 +148,20 @@ The log output from each run of `chia plots create` is output to a logs director
 Application logs output by the goplot scripts are located in the `logs/` directory under the goplot root.
 
   
-**Goplot Config Directory**
+### Goplot Config Directory**
 
 Configuration parameters and state files for goplot are kept in the `config/` directory under the goplot root. See more about this below.
 
-  
-**Goplot Collectors Directory**
+
+### Goplot Collectors Directory
 
 Collector scripts that are used to collect metrics for Prometheus are located in the `collectors/` directory under the goplot root. See the installation instructions for how to use these.
+
 
 **Goplot Dashboard Directory**
 
 The JSON configuration for the example Grafana dashboad for Goplot is located in the `dashboard/` directory under the goplot root. See the installation instructions for how to use this in Grafana.
+
 
 **Goplot Plot Pacing Parameters**
 
