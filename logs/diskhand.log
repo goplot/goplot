@@ -1,0 +1,21 @@
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : start diskhand.sh
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : farms found: 1
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk1.goplot is set to 99999999999999; not using disk1
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk10.goplot is set to 99999999999999; not using disk10
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk11.goplot is set to 99999999999999; not using disk11
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk12.goplot is set to 99999999999999; not using disk12
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk13.goplot is set to 99999999999999; not using disk13
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk16.goplot is set to 99999999999999; not using disk16
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : checking space available on /farm/1/disk2
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /farm/1/disk2 13498873900/13672380412/173506512 used/total/available
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /farm/1/disk2 has 0 space committed
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /farm/1/disk2 has 173506512 space available for plotting
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /farm/1/disk2 has room for plotting, setting size to 13498873900
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk3.goplot is set to 99999999999999; not using disk3
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk4.goplot is set to 99999999999999; not using disk4
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk5.goplot is set to 99999999999999; not using disk5
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk6.goplot is set to 99999999999999; not using disk6
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk7.goplot is set to 99999999999999; not using disk7
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk8.goplot is set to 99999999999999; not using disk8
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : /etc/chia/goplot/disks/disk9.goplot is set to 99999999999999; not using disk9
+Fri 16 Apr 2021 01:05:01 PM MDT - diskhand : finished diskhand.sh

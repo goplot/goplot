@@ -1,4 +1,5 @@
 #!/bin/bash
+# Script to quickly print the goplot configuration from CLI
 # Set the goplot working directory
 working_dir="/etc/chia/goplot"
 # Set the directory where the config and state files are kept
