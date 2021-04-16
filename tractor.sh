@@ -44,7 +44,7 @@ if [ -f "$on_toggle_file" ]; then
         dest_farms=(`ls ${dest_farms_path}`)
         echo "$(date) - prejob   : destination farms found:" ${dest_farms[@]} >> $main_log
         # Set the number of destination farms found
-        num_dest_farms=$(echo ${dest_farms[@]})
+        num_dest_farms=$(echo ${#dest_farms[@]})
         # Set the destination farm to use on this plot, just increment the last farm by 1
         my_dest_farm=$(( last_dest_farm + 1 ))
         # If the farm number is greater than the farms available then set the plot to use farm 1
@@ -60,7 +60,7 @@ if [ -f "$on_toggle_file" ]; then
         temp_farms=(`ls ${temp_farms_path}`)
         echo "$(date) - prejob   : temp farms found:" ${temp_farms[@]} >> $main_log
         # Set the number of destination farms found
-        num_temp_farms=$(echo ${temp_farms[@]})
+        num_temp_farms=$(echo ${#temp_farms[@]})
         # Set the temp farm to use on this plot, just increment the last farm by 1
         my_temp_farm=$(( last_temp_farm + 1 ))
         # If the farm number is greater than the farms available then set the plot to use farm 1
