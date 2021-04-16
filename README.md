@@ -203,7 +203,7 @@ Here is a list of the config and state files and a short description of their pu
   - *plot_gap.goplot*; the minimum length of time in seconds between new plots
   - *plot_poll.goplot*; the minimum length of time in seconds between condition polls
   - *load_max.goplot*; the goplot load value over which new plots will not be created
-  - *max_plots*; the maximum number of parallel plots that can be running at the same time
+  - *max_plots.goplot*; the maximum number of parallel plots that can be running at the same time
   - *index.goplot*; the plot index number for this plotter, used in log files and to name the output plot log file
   - *farm_dest.goplot*; the last destination farm number used by goplot.sh/tractor.sh
   - *farm_temp.goplot*; the last temp farm number used by goplot.sh/tractor.sh
@@ -230,7 +230,7 @@ diskhand.sh should be configured as a cron job to run every five minutes, as wit
 
   `*/5 * * * * /etc/chia/goplot/diskhand.sh`
 
-diskhand.sh overwrites a new log file with every run in logs/diskhand.log, unless the file has been set to a very large value as shown above.
+diskhand.sh overwrites a new log file with every run in logs/diskhand.log. It also will write a new disk file with every run for every disk it finds, unless the file has been set to a very large value as shown above. This means the files can be deleted and they will be recreated based on the current state of the disks.
 
 
 ### tractor.sh
@@ -344,7 +344,7 @@ Then use `disown -h` to keep the script running when you logout.
 
 ### Import the Grafana dashboard and set Goplot host variables
 
-Open Grafana and import the example dashboard from the JSON file in the dashboard directory. You will need to set  these three variables: `farmer1`, `$plotter1`, `$remote_harvester1` to the actual location of your hosts. Single machine setups will not need to change anything as both plotter1 and farmer1 already point to `localhost:9100`.
+Open Grafana and import the example dashboard from the JSON file in the dashboard directory. You will need to set these three variables: `$farmer1`, `$plotter1`, `$remote_harvester1` to the actual location of your hosts. Single machine setups will not need to change anything as both plotter1 and farmer1 already point to `localhost:9100`.
 
 If Prometheus is receiving the custom metrics and Grafana can see the metrics then the Goplot specific parts of the dashboard should be working. The other parts may requires some tinkering to work on your system. The panels inside the Misc row are mostly straight from the node_exporter dashboard.
 
