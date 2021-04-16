@@ -83,7 +83,7 @@ The goplot package consists of the following shell scripts:
 Concepts
 ------------
 
-**Farms**
+### Farms
 
 Goplot uses the concept of **"farms"** to distribute IO to different IO busses for the destination drives and for the temp drives. As goplot starts new plots it will rotate through each farm to distribute the IO load. Each farm is assigned a number in sequence starting at "1". The farm configuration is communicated to goplot by a drive's mount point. 
 
@@ -109,7 +109,7 @@ If the temp drives are combined into the same RAID0 then there is only one temp 
   /plot_temp/1
 ```
 
-**Disks**
+### Disks
 
 Plot destination farms are made up of **"disks"** which are named at the time the drive is mounted to the farm directory. It is recommended that you adopt a simple naming standard such as "disk1, disk2, disk3" etc. Each disk should be mounted to the farm directory that designates the physical bus the drive is attached to. Using the above example, let's say the farmer/plotter has two USB 3.0 busses, each connecting to a four-port USB hub, and each hub has three external drives attached. In this example odd-numbered disks are attached to farm 1 (hub 1) and even-numbered disks are attached to farm 2 (hub 2). This configuration would be represented in the file system as:
 
@@ -125,7 +125,7 @@ Plot destination farms are made up of **"disks"** which are named at the time th
 Each of these is the mount point for a physical destination drive.
 
 
-**Plots Directory**
+### Plots Directory
 
 Completed plots are contained in a plots directory on the destination farms. All disks need a plots directory to hold plots. Temp drives do not use a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be fully represented in the filesystem as:
 
@@ -134,7 +134,7 @@ Completed plots are contained in a plots directory on the destination farms. All
   /plot_temp/1
 ```
 
-**Plot Logs Directory**
+### Plot Logs Directory
 
 The log output from each run of `chia plots create` is output to a logs directory on the destination drive. You may never need them, but who knows what data you may want later! The logs directory needs to be on each destination drive, such as:
 
@@ -143,12 +143,12 @@ The log output from each run of `chia plots create` is output to a logs director
   /farm/2/disk2/logs
 ```
 
-**Goplot Logs Directory**
+### Goplot Logs Directory
 
 Application logs output by the goplot scripts are located in the `logs/` directory under the goplot root.
 
   
-### Goplot Config Directory**
+### Goplot Config Directory
 
 Configuration parameters and state files for goplot are kept in the `config/` directory under the goplot root. See more about this below.
 
@@ -158,12 +158,12 @@ Configuration parameters and state files for goplot are kept in the `config/` di
 Collector scripts that are used to collect metrics for Prometheus are located in the `collectors/` directory under the goplot root. See the installation instructions for how to use these.
 
 
-**Goplot Dashboard Directory**
+### Goplot Dashboard Directory
 
 The JSON configuration for the example Grafana dashboad for Goplot is located in the `dashboard/` directory under the goplot root. See the installation instructions for how to use this in Grafana.
 
 
-**Goplot Plot Pacing Parameters**
+### Goplot Plot Pacing Parameters
 
 Goplot uses three parameters to keep plotting within the system sweet spot of "not too busy" but still cranking out plots as fast as the system can handle:
 
@@ -180,7 +180,7 @@ load_max uses "Goplot load", which is derived from the load statistics seen in t
 The best load_max setting for any plotter can only be determined through benchmarking different scenarios.
 
 
-**goplot.sh**
+### goplot.sh
 
 goplot.sh is the main script that runs continuously in the background. The job of goplot.sh is to intermittently check the plotting and environmental conditions on the plotter to see if it should start a new plot. 
 
@@ -191,7 +191,7 @@ goplot.sh can be started in the background from the goplot root directory with t
 You can ensure the script continues to run after you logoout with `disown -h`
 
 
-**goplot.sh Configuration Files**
+### goplot.sh Configuration Files
 
 goplot.sh has a few configuration variables that are kept in files in the "config" directory under the goplot root. This simple configuration uses one variable entry per file. The config directory also holds state files that are accessed on occasion, again one variable entry per file. Keeping goplot's tunable configuration parameters and state information in files allows them to be easily changed while the script is running; the new parameter can be echoed to the parameter-specific config file and the script will pick up the changes on the next loop. For instance, to configure goplot to start no more than 16 parallel plots this command can be used:
 
@@ -209,14 +209,14 @@ Here is a list of the config and state files and a short description of their pu
   - *farm_temp.goplot*; the last temp farm number used by goplot.sh/tractor.sh
 
 
-**goplot.log**
+### goplot.log
 
 Both goplot.sh and tractor.sh write their log entries to goplot.log, which is located in the logs directory under the goplot root. When you are setting up your plotting you will want to watch this log file to see what is happening, and this is best done with tail, like:
 
   `tail -f /etc/chia/goplot/logs/goplot.log`
 
 
-**diskhand.sh**
+### diskhand.sh
 
 Much as a real farmer needs field hands to help work their fields, goplot needs diskhand.sh to automate working with disks. This is especially valuable when one wants to be gone from the plotter for a time without tending to it. Automatic disk management on plotters must take into account the fact that disk space is committed many hours before it is actually used. The job of diskhand.sh is to find the disks listed under each farm, query them for available space, query running jobs to estimate committed space, determine if the disk has space left for plotting, then write the space used to the disk's file under the goplot disks directory. If there is not enough space available for plotting then diskhand will write a large value of "9999999999999" so tractor.sh will know it is not available.
 
@@ -233,7 +233,7 @@ diskhand.sh should be configured as a cron job to run every five minutes, as wit
 diskhand.sh overwrites a new log file with every run in logs/diskhand.log, unless the file has been set to a very large value as shown above.
 
 
-**tractor.sh**
+### tractor.sh
 
 tractor.sh is the script called by goplot.sh to start a new plot. By keeping tractor.sh as a separate script it allows the parameters for "chia plots start" to be tuned between plots. Also you can use tractor.sh to manually start a plot outside of the usual goplot.sh polling cycle while still retaining the other goplot functions such as distributed farm loading and Grafana annotations. A new plot is easily started with the parameters defined in tractor.sh by running the script from the goplot root and sending it to the background like this:
 
@@ -252,7 +252,7 @@ Installation
 **Note:** Permissions between application setups can cause all sorts of problems; when in doubt run something as root/sudo to see if that solves the problem.
 
 
-**Install the required software**
+### Install the required software
 
 Before running goplot you need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! But the rest of the setup is much more challenging...
 
@@ -263,7 +263,7 @@ There are many excellent guides out there for installing Prometheus and Grafana,
   `ExecStart=/usr/local/bin/node_exporter --collector.textfile.directory='/etc/prometheus/collectors'`
 
 
-**Setup destination and temp directories**
+### Setup destination and temp directories
 
 Remember that the directory structure tells goplot how to distribute load across IO busses. Create farm and temp directories with their mount points as described above. Mount your destination drives and create their *plots* and *logs* directories. As an example, say you have a plotter with two USB busses, each with two destination drives attached (four total external disks) and a single SSD temp drive. Your directory structure for plotting should look something like this:
 
@@ -279,7 +279,7 @@ Remember that the directory structure tells goplot how to distribute load across
 /plot_temp/1
 ```
 
-**Git clone goplot**
+### Git clone goplot
 
 To get goplot just clone this repository from the system you want to install it on, ideally from the /etc/chia directory:
 
@@ -296,7 +296,7 @@ You should also be able to run diskhand.sh and look at its log to see that it pr
 cat logs/diskhand.log
 ```
 
-**Set configuration parameters**
+### Set configuration parameters
 
 You can set each tunable goplot configuration parameter by echoing the value you want to set to that parameter's config file. For instance, to set the minimum time between plots you would enter this from the goplot root directory:
 
@@ -311,7 +311,7 @@ Provided you are not already limited by RAM or SSD temp drive space it can be ha
   For example, with a 8 core system you can start with max_plots=8 and plot_gap=4500 for what should be a relatively safe run, and you can modify your configuration over time to find your plotter's sweet spot.
 
 
-**Configure cron jobs**
+### Configure cron jobs
 
 Cron jobs are required for diskhand.sh and for getfarm_collector.sh and goplot_collector.sh. The `sponge` tool is used to soak up the output of the collector scripts and output it all at once to the collector .prom file; this prevents problems with the file being written to at the same time Prometheus is trying to scrape it. The system crontab can be edited with the command:
 
@@ -328,12 +328,12 @@ Create three entries that look something like this:
 If you don't see files created in the destination folders then you will need to troubleshoot. Remember that you can always run these scripts directly from the command line as a troubleshooting step and work your way up to a line that will work in cron.
 
 
-**Set Grafana API key variable in tractor.sh**
+### Set Grafana API key variable in tractor.sh
 
 Edit tractor.sh and set the value for the `$grafana_api_key` variable to your Grafana API key inside single quotes. 
 
 
-**Start harvesterlog.sh**
+### Start harvesterlog.sh
 
 Start harvesterlog.sh so that it runs in the background by running this command from the goplot root:
 
@@ -342,7 +342,7 @@ Start harvesterlog.sh so that it runs in the background by running this command 
 Then use `disown -h` to keep the script running when you logout.
 
 
-**Import the Grafana dashboard and set Goplot host variables**
+### Import the Grafana dashboard and set Goplot host variables
 
 Open Grafana and import the example dashboard from the JSON file in the dashboard directory. You will need to set  these three variables: `farmer1`, `$plotter1`, `$remote_harvester1` to the actual location of your hosts. Single machine setups will not need to change anything as both plotter1 and farmer1 already point to `localhost:9100`.
 
@@ -351,7 +351,7 @@ If Prometheus is receiving the custom metrics and Grafana can see the metrics th
 Later consider installing `nvmetools` and using the [nvme stats collector](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/nvme_metrics.sh) or some modified version for your situation.
 
 
-**Start goplot.sh**
+### Start goplot.sh
 
 Before you start goplot you need to set on_toggle.goplot to "run":
 
