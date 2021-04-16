@@ -3,14 +3,14 @@
 
 Goplot is a manager for chia farms written in bash!
 
-Development of goplot was based on a few guiding principles:
+Development of Goplot was based on a few guiding principles:
 
   1. The heart of Chia farming is basically file management operations, and Linux is the best general OS for filesystem management.
   2. Core bash tools already integrated into the Linux OS support most functions needed in a Chia farm.
   3. Bash and bash scripts are highly accessible for both beginners and seasoned Linux experts.
   4. Monitoring and visualization needs are best met using open source tools, supplemented with custom scripts to get the data.
 
-**Note:** goplot is not for the faint of heart or novices without tenacity! It is not a simple executable that you just install, but rather an integration of open source tools glued together with bash scripts. 
+**Note:** Goplot is not for the faint of heart or novices without tenacity! It is not a simple executable that you just install, but rather an integration of open source tools glued together with bash scripts. 
 
 [There is an xkcd for this...](https://xkcd.com/1742/)
 
@@ -18,7 +18,7 @@ Development of goplot was based on a few guiding principles:
 Uses
 ------------
 
-You can use goplot to:
+You can use Goplot to:
 
   1. Automatically start and pace parallel Chia plots on your plotter.
   2. Monitor the performance of your parallel plotting.
@@ -27,13 +27,15 @@ You can use goplot to:
   5. Assess your XCH wins!
   6. Inspire your own project!
 
-(Please have fun stealing whatever you can from this project and make it your own, or if you want to contribute to goplot submit a PR.)
+(Please have fun stealing whatever you can from this project and make it your own, or if you want to contribute to Goplot submit a PR.)
 
 
 Other Options
 ------------
 
-Goplot is not for everyone. It was developed mainly with concern for management and monitoring of massive parallel plotting. It assumes knowledge of Linux and willingness to tinker with bash scripts. You will need to learn a little something about doing custom dashboards in Grafana.  There are a few other options worth looking at that may either do what you want better than goplot or may supplement goplot:
+Goplot is not for everyone. It was developed mainly with concern for management and monitoring of massive parallel plotting. It assumes knowledge of Linux and willingness to tinker with bash scripts. You will need to learn a little something about doing custom dashboards in Grafana. You may have to do a lot of things you have no idea how to do and only searches to help.
+
+There are a few other options worth looking at that may either do what you want better than goplot or may supplement goplot:
 
   1. Chia default graphical interface; https://github.com/Chia-Network/chia-blockchain/wiki/INSTALL
     - Probably the best choice for a simple farm, likely to get more features added over time and perhaps eventually make goplot obsolete
@@ -69,11 +71,11 @@ The goplot package consists of the following shell scripts:
 
 - goplot.sh is the main script and runs continuously in the background; calls tractor.sh to start new parallel plots according to your configuration
 - tractor.sh is called by goplot.sh to start a new plot; logs details and sends annotations to Grafana
-- diskhand.sh is run by cron every two minutes; keeps an eye on disk space and provides disks for plotting; takes disks out of rotation when filled
+- diskhand.sh is run by cron every five minutes; keeps an eye on disk space and provides disks for plotting; takes disks out of rotation when filled
 - harvesterlog.sh runs continuously in the background; monitors the Chia log for eligible plots passing the plot filter, writes the data to prometheus prom directory
 - goplot_collector.sh is run by cron on the plotter every minute; writes custom goplot stats to prometheus prom directory
 - getfarm_collector.sh is run by cron on the farmer every minute; writes custom chia farm stats to prometheus prom directory 
-- getharvester_collector.sh is run on a remote harvester by cron every minute; sends custom chia farm stats to prometheus, writes harvester process status to prometheus prom directory
+- getharvester_collector.sh is run on the remote harvester by cron every minute; sends custom chia farm stats to prometheus, writes harvester process status to prometheus prom directory
 - getgoplot.sh is basically the CLI output version of goplot_collector.sh; used to quickly check your goplot configuration from the CLI
 - getfarm.sh is basically the CLI output version of getfarm_collector.sh; used to quickly check your farm status from the CLI
 
@@ -120,6 +122,9 @@ Plot destination farms are made up of **"disks"** which are named at the time th
   /farm/2/disk6 
 ```
 
+Each of these is the mount point for a physical destination drive.
+
+
 **Plots Directory**
 
 Completed plots are contained in a plots directory on the destination farms. All disks need a plots directory to hold plots. Temp drives do not use a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be fully represented in the filesystem as:
@@ -142,12 +147,12 @@ The log output from each run of `chia plots create` is output to a logs director
 
 Application logs output by the goplot scripts are located in the `logs/` directory under the goplot root.
 
-
+""
 **Goplot Config Directory**
 
 Configuration parameters and state files for goplot are kept in the `config/` directory under the goplot root. See more about this below.
 
-
+""
 **Goplot Collectors Directory**
 
 Collector scripts that are used to collect metrics for Prometheus are located in the `collectors/` directory under the goplot root. See the installation instructions for how to use these.
