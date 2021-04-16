@@ -5277,7 +5277,7 @@
         "type": "constant"
       },
       {
-        "description": "Variable for remote_harvester1",
+        "description": "Variable for plotter1",
         "error": null,
         "hide": 2,
         "label": null,
@@ -5287,7 +5287,7 @@
         "type": "constant"
       },
       {
-        "description": "Variable for remote_harvester1",
+        "description": "Variable for farmer1",
         "error": null,
         "hide": 2,
         "label": null,

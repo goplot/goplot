@@ -23,9 +23,12 @@ fi
 { echo "# HELP farm harvester status Chia harvester status";
 echo "# TYPE farm_harvester_status gauge";
 echo "farm_harvester_status $harvester_status"; } > $harvester_status_prom_file
+# Activate the chia venv
 cd $chia_venv_dir
 . ./activate
+# Get the chia farm summary
 chia_farm_summary="`chia farm summary`"
+# Get the harvester-specific farm metrics and write it to the prom file; problems with delay using sponge/tee here, so...
 farm_plot_count="$(echo "$chia_farm_summary" | grep 'Plot count' | sed 's/.*count: //g')"
 farm_plots_size="$(echo "$chia_farm_summary" | grep 'Total size of plots' | sed 's/.*plots: //g' | sed 's/..iB//g')"
 { echo "# HELP farm_plot_count Number of Chia farm plots";
@@ -34,4 +37,5 @@ echo "farm_plot_count" $farm_plot_count;
 echo "# HELP farm_plots_size Total size of Chia farm plots";
 echo "# TYPE farm_plots_size gauge";
 echo "farm_plots_size" $farm_plots_size; } > $harvesterstats_prom_file
+# Politely deactivate the venv
 deactivate
