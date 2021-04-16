@@ -26,7 +26,7 @@ if [ -f "$on_toggle_file" ]; then
 		echo "$(date) - prejob   : on_toggle file is not set to 'run', the script will not run" >> $main_log
 	else
         # Set the buffers
-		buffer=4000
+		buffer=3900
         # Set the buckets
 		buckets=128
         # Set the number of threads to use
