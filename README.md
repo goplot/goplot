@@ -127,7 +127,7 @@ Each of these is the mount point for a physical destination drive.
 
 ### Plots Directory
 
-Completed plots are contained in a plots directory on the destination farms. All disks need a plots directory to hold plots. Temp drives do not use a plots directory. For example, a simple farmer/plotter setup with only one temp drive and only one destination drive would be fully represented in the filesystem as:
+Completed plots are contained in a plots directory on the destination farms. All disks need a plots directory to hold plots. Temp drives do not use a plots directory. For example, a simple farmer/plotter setup with one temp drive and one destination drive would be fully represented in the filesystem as:
 
 ```
   /farm/1/disk1/plots
@@ -188,7 +188,7 @@ goplot.sh can be started in the background from the goplot root directory with t
 
   `./goplot &`
 
-You can ensure the script continues to run after you logoout with `disown -h`
+You can ensure the script continues to run after you logout with `disown -h`
 
 
 ### goplot.sh Configuration Files
@@ -235,7 +235,7 @@ diskhand.sh overwrites a new log file with every run in logs/diskhand.log. It al
 
 ### tractor.sh
 
-tractor.sh is the script called by goplot.sh to start a new plot. By keeping tractor.sh as a separate script it allows the parameters for "chia plots start" to be tuned between plots. Also you can use tractor.sh to manually start a plot outside of the usual goplot.sh polling cycle while still retaining the other goplot functions such as distributed farm loading and Grafana annotations. A new plot is easily started with the parameters defined in tractor.sh by running the script from the goplot root and sending it to the background like this:
+tractor.sh is the script called by goplot.sh to start a new plot. tractor.sh starts by looking at the directory structure to determine the farm layout, compares the layout to the last farms used for plotting and detemines the next in sequence, selects the disk in the selected destination farm with the least used space, then starts a new plot. By keeping tractor.sh as a separate script it allows the parameters for "chia plots start" to be tuned between plots. Also you can use tractor.sh to manually start a plot outside of the usual goplot.sh polling cycle while still retaining the other goplot functions such as distributed farm loading and Grafana annotations. A new plot is easily started with the parameters defined in tractor.sh by running the script from the goplot root and sending it to the background like this:
 
   `./tractor.sh &`
 
@@ -256,7 +256,7 @@ Installation
 
 Before running goplot you need to install the required software listed above and ensure it is working. If you are reading this then you probably have the Chia software already! But the rest of the setup is much more challenging...
 
-**WARNING**: You should either have intermediate experience in systems and application integration on Linux to continue, **or** be prepared for a very steep learning curve with little assistance other than lots of web searches.
+**WARNING**: You should have intermediate experience in systems and application integration on Linux to continue, **or** be prepared for a very steep learning curve with little assistance other than lots of web searches.
 
 There are many excellent guides out there for installing Prometheus and Grafana, just be sure you can login to the Grafana admin page and pull up the public node_exporter dashboard before you continue. The node_exporter itself is easy to setup; be sure to put the textfile directory in the launch command as a startup option, for instance this entry in the .service file:
 
@@ -400,7 +400,7 @@ You should now see farm space, farm plots, eligible plots metrics, and status fo
 Remote Plotters
 ------------
 
-The setup for a remote plotter is a combination of the main farmer and the remote harvester. This is an advanced topic so if you are that far along then you can probably figure out the details for yourself with a little guidance; setup goplot as on the main farmer, setup the remote harvester configuration, and then if you want Grafana plot_start and plot_end annotations then you will also need to be sure the remote plotter can communicate with Grafana port 3000. Change the $grafana_url variable in tractor.sh to point to the Grafana host and (if desired) modify the annotation tags.
+The setup for a remote plotter is a combination of the main plotter/farmer and the remote harvester. This is an advanced topic so if you are that far along then you can probably figure out the details for yourself with a little guidance; setup goplot as on the main plotter, setup the remote harvester configuration, and then if you want Grafana plot_start and plot_end annotations then you will also need to be sure the remote plotter can communicate with Grafana port 3000. Change the $grafana_url variable in tractor.sh to point to the Grafana host and (if desired) modify the annotation tags.
 
 
 Running and Tuning Tips
