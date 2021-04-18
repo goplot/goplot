@@ -8,11 +8,9 @@ disk_dir="${working_dir}/disks"
 # Set the log location
 log="${working_dir}/logs/diskhand.log"
 # Set the final plot size in bytes, best to round up to the nearest GiB here
-final_plot_size=102000000
-# Put in a slop number, this is just to be sure that we don't try to use a disk that does not have enough space
-slop=4000000
-# Add the slop to the final plot size to determin the needed size
-need_space=$(( final_plot_size + slop ))
+final_plot_size=109000000
+# Set the needed size
+need_space=$final_plot_size
 echo "$(date) - diskhand : start diskhand.sh" > $log
 # Set the path to the farm
 farms_path="/farm"
