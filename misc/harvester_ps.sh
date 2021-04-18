@@ -13,7 +13,7 @@ log="${working_dir}/logs/mon_events.log"
 # Check for a defunct chia_harvester process using ps
 defunct_harvester="$(ps -eaf | grep 'chia_harvester' | grep 'defunct' | grep -v 'grep' -c)"
 # If there is a defunct process then it must not be harvesting, we need to restart it
-if [[ $defunct_harvester == "1" ]]; then
+if [[ $defunct_harvester > "0" ]]; then
 # Set the chia venv directory
 chia_venv_dir="/etc/chia/chia-blockchain"
 # Activate the chia virtual environment
